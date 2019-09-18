@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "billeteravirtual (Launch) - App",
+            "request": "launch",
+            "mainClass": "ar.com.ada.billeteravirtual.App",
+            "projectName": "billeteravirtual",
+            "console" :"externalTerminal"
+        }
+    ]
+}
