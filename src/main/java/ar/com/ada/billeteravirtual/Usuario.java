@@ -18,6 +18,7 @@ public class Usuario {
     private String password;
     @Column (name= "email")
     private String userEmail;
+    private Persona persona;
     @Column(name = "persona_id")
     private int personaId;
 
