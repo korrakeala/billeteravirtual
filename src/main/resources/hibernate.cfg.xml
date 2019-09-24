@@ -11,10 +11,15 @@
     <property name="connection.username">adadb</property>
     <!-- Contraseña pública para demo -->
     <property name="connection.password">s3qu3m3v35</property>
-    <property name="show_sql">false</property>
+    <property name="show_sql">true</property>
         
     <mapping class="ar.com.ada.billeteravirtual.Persona" />
     <mapping class="ar.com.ada.billeteravirtual.Usuario" />
+    <mapping class="ar.com.ada.billeteravirtual.Billetera" />
+    <mapping class="ar.com.ada.billeteravirtual.Coordenada" />
+    <mapping class="ar.com.ada.billeteravirtual.Cuenta" />
+    <mapping class="ar.com.ada.billeteravirtual.Dinero" />
+    <mapping class="ar.com.ada.billeteravirtual.Movimiento" />
      
   </session-factory>
 </hibernate-configuration>

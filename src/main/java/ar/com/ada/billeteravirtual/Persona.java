@@ -2,6 +2,9 @@ package ar.com.ada.billeteravirtual;
 
 import javax.persistence.*;
 
+import ar.com.ada.billeteravirtual.*;
+import ar.com.ada.billeteravirtual.excepciones.*;
+
 /**
  * Persona
  */
@@ -17,8 +20,12 @@ public class Persona {
     private String dni;
     private int edad;
     private String email;
-    private Billetera billetera;
-    private int billeteraId;
+    //private Billetera billetera;
+    //@Column(name = "billetera_id")
+    //private int billeteraId;
+    //@JoinColumn(name= "persona_id", referencedColumnName = "persona_id")
+    @OneToOne( mappedBy = "persona", cascade = CascadeType.ALL)
+    private Usuario usuario;
 
     public Persona(String nombre, String dni, int edad, String email) {
         this.nombre = nombre;
@@ -58,12 +65,22 @@ public class Persona {
         return edad;
     }
 
-    public void setEdad(int edad) {
+    public void setEdad(int edad) throws PersonaEdadException {
+        if(edad < 18)
+        {
+            //no se ejecuta nada mas despues del throw
+            throw new PersonaEdadException(this, "ocurrio un error con la edad");
+
+
+        }
         this.edad = edad;
     }
 
     @Override
     public String toString() {
+        if (this.usuario != null)
+        return "Persona [dni=" + dni + ", edad=" + edad + ", nombre=" + nombre + ", usuario= "+usuario.getUserName()+"]";
+    else
         return "Persona [dni=" + dni + ", edad=" + edad + ", nombre=" + nombre + "]";
     }
 
@@ -73,6 +90,23 @@ public class Persona {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+	public void setPersona(Persona p) {
+	}
+
+   /**
+     * @param usuario the usuario to set
+     */
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+        this.usuario.setPersona(this); //Vinculamos ambos objetos entre si
+    }
+    /**
+     * @return the usuario
+     */
+    public Usuario getUsuario() {
+        return usuario;
     }
 
 }
