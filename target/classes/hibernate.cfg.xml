@@ -16,9 +16,7 @@
     <mapping class="ar.com.ada.billeteravirtual.Persona" />
     <mapping class="ar.com.ada.billeteravirtual.Usuario" />
     <mapping class="ar.com.ada.billeteravirtual.Billetera" />
-    <mapping class="ar.com.ada.billeteravirtual.Coordenada" />
     <mapping class="ar.com.ada.billeteravirtual.Cuenta" />
-    <mapping class="ar.com.ada.billeteravirtual.Dinero" />
     <mapping class="ar.com.ada.billeteravirtual.Movimiento" />
      
   </session-factory>

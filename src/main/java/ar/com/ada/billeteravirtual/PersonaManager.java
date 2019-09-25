@@ -38,7 +38,7 @@ public class PersonaManager {
         session.beginTransaction();
 
         session.save(persona);
-        //Si no activo el cascade all en el OnToOne del usuario, tengo que forzar la llamada
+        //Si no activo el cascade all en el OneToOne del usuario, tengo que forzar la llamada
         //session.save(persona.getUsuario());
   
         session.getTransaction().commit();

@@ -1,9 +1,15 @@
 package ar.com.ada.billeteravirtual;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
-import ar.com.ada.billeteravirtual.*;
-import ar.com.ada.billeteravirtual.excepciones.*;
+import ar.com.ada.billeteravirtual.excepciones.PersonaEdadException;
 
 /**
  * Persona
@@ -20,11 +26,12 @@ public class Persona {
     private String dni;
     private int edad;
     private String email;
-    //private Billetera billetera;
+    @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL)
+    private Billetera billetera;
     //@Column(name = "billetera_id")
     //private int billeteraId;
     //@JoinColumn(name= "persona_id", referencedColumnName = "persona_id")
-    @OneToOne( mappedBy = "persona", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL)
     private Usuario usuario;
 
     public Persona(String nombre, String dni, int edad, String email) {
@@ -76,14 +83,6 @@ public class Persona {
         this.edad = edad;
     }
 
-    @Override
-    public String toString() {
-        if (this.usuario != null)
-        return "Persona [dni=" + dni + ", edad=" + edad + ", nombre=" + nombre + ", usuario= "+usuario.getUserName()+"]";
-    else
-        return "Persona [dni=" + dni + ", edad=" + edad + ", nombre=" + nombre + "]";
-    }
-
     public String getEmail() {
         return email;
     }
@@ -107,6 +106,21 @@ public class Persona {
      */
     public Usuario getUsuario() {
         return usuario;
+    }
+
+    public Billetera getBilletera() {
+        return billetera;
+    }
+
+    public void setBilletera(Billetera billetera) {
+        this.billetera = billetera;
+        this.billetera.setPersona(this);
+    }
+
+    @Override
+    public String toString() {
+        return "Persona [billetera=" + billetera + ", dni=" + dni + ", edad=" + edad + ", email=" + email + ", nombre="
+                + nombre + ", pesonaId=" + pesonaId + ", usuario=" + usuario + "]";
     }
 
 }

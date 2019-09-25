@@ -7,26 +7,32 @@ import javax.persistence.*;
 /**
  * Movimiento
  */
+@Entity
+@Table(name = "movimiento")
 public class Movimiento {
 
     @Id
     @Column(name = "movimiento_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int movimientoId;
+    @Column(name = "fecha_mov")
     private Date fechaMov;
-    //private Coordenada ubicacion (fase 2);
-
-    private String tipoOp; //"Entrada" "Salida"
-    private String conceptoOp; //"Pagos" "Deposito" "Transferencia" "Cobro"
+    private double importe;
+    // private Coordenada ubicacion (fase 2);
+    private String tipo; // "Entrada" "Salida"
+    private String concepto; // "Pagos" "Deposito" "Transferencia" "Cobro"
     private String detalle;
-    private int estado; //"Aprobado" "Pendiente" "Rechazado"
-    private Usuario deUsuario;
-    private Usuario aUsuario;
+    private int estado; // "Aprobado" "Pendiente" "Rechazado"
+    @ManyToOne
+    @JoinColumn(name = "cuenta_id", referencedColumnName = "cuenta_id")
+    private Cuenta cuenta;
+    @Column(name = "de_usuario_id")
     private int deUsuarioId;
+    @Column(name = "a_usuario_id")
     private int aUsuarioId;
-    private Cuenta cuentaDestino;
-    private Cuenta cuentaOrigen;
+    @Column(name = "cuenta_destino_id")
     private int cuentaDestinoId;
+    @Column(name = "cuenta_origen_id")
     private int cuentaOrigenId;
 
     public Movimiento() {
@@ -48,22 +54,6 @@ public class Movimiento {
         this.fechaMov = fechaMov;
     }
 
-    public String getTipoOp() {
-        return tipoOp;
-    }
-
-    public void setTipoOp(String tipoOp) {
-        this.tipoOp = tipoOp;
-    }
-
-    public String getConceptoOp() {
-        return conceptoOp;
-    }
-
-    public void setConceptoOp(String conceptoOp) {
-        this.conceptoOp = conceptoOp;
-    }
-
     public String getDetalle() {
         return detalle;
     }
@@ -78,22 +68,6 @@ public class Movimiento {
 
     public void setEstado(int estado) {
         this.estado = estado;
-    }
-
-    public Usuario getDeUsuario() {
-        return deUsuario;
-    }
-
-    public void setDeUsuario(Usuario deUsuario) {
-        this.deUsuario = deUsuario;
-    }
-
-    public Usuario getaUsuario() {
-        return aUsuario;
-    }
-
-    public void setaUsuario(Usuario aUsuario) {
-        this.aUsuario = aUsuario;
     }
 
     public int getDeUsuarioId() {
@@ -112,22 +86,6 @@ public class Movimiento {
         this.aUsuarioId = aUsuarioId;
     }
 
-    public Cuenta getCuentaDestino() {
-        return cuentaDestino;
-    }
-
-    public void setCuentaDestino(Cuenta cuentaDestino) {
-        this.cuentaDestino = cuentaDestino;
-    }
-
-    public Cuenta getCuentaOrigen() {
-        return cuentaOrigen;
-    }
-
-    public void setCuentaOrigen(Cuenta cuentaOrigen) {
-        this.cuentaOrigen = cuentaOrigen;
-    }
-
     public int getCuentaDestinoId() {
         return cuentaDestinoId;
     }
@@ -144,13 +102,45 @@ public class Movimiento {
         this.cuentaOrigenId = cuentaOrigenId;
     }
 
+    public double getImporte() {
+        return importe;
+    }
+
+    public void setImporte(double importe) {
+        this.importe = importe;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public String getConcepto() {
+        return concepto;
+    }
+
+    public void setConcepto(String concepto) {
+        this.concepto = concepto;
+    }
+
+    public Cuenta getCuenta() {
+        return cuenta;
+    }
+
+    public void setCuenta(Cuenta cuenta) {
+        this.cuenta = cuenta;
+        this.cuenta.getMovimientos().add(this);
+    }
+
     @Override
     public String toString() {
-        return "Movimiento [aUsuario=" + aUsuario + ", aUsuarioId=" + aUsuarioId + ", conceptoOp=" + conceptoOp
-                + ", cuentaDestino=" + cuentaDestino + ", cuentaDestinoId=" + cuentaDestinoId + ", cuentaOrigen="
-                + cuentaOrigen + ", cuentaOrigenId=" + cuentaOrigenId + ", deUsuario=" + deUsuario + ", deUsuarioId="
-                + deUsuarioId + ", detalle=" + detalle + ", estado=" + estado + ", fechaMov=" + fechaMov
-                + ", movimientoId=" + movimientoId + ", tipoOp=" + tipoOp + "]";
+        return "Movimiento [aUsuarioId=" + aUsuarioId + ", concepto=" + concepto + ", cuenta=" + cuenta
+                + ", cuentaDestinoId=" + cuentaDestinoId + ", cuentaOrigenId=" + cuentaOrigenId + ", deUsuarioId="
+                + deUsuarioId + ", detalle=" + detalle + ", estado=" + estado + ", fechaMov=" + fechaMov + ", importe="
+                + importe + ", movimientoId=" + movimientoId + ", tipo=" + tipo + "]";
     }
 
 }

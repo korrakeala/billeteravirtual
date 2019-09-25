@@ -12,7 +12,6 @@ public class Usuario {
     @Id
     @Column(name = "usuario_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private int usuarioId;
     private String userName;
     private String password;
@@ -20,7 +19,6 @@ public class Usuario {
     private String userEmail;
     @OneToOne
     @JoinColumn(name= "persona_id", referencedColumnName = "persona_id")
-    //@MapsId
     private Persona persona;
     //@Column(name = "persona_id")
     //private int personaId;
@@ -34,7 +32,6 @@ public class Usuario {
     public Usuario(){
 
     }
-
 
     public Usuario (String password){
         this.password = password;
@@ -72,17 +69,18 @@ public class Usuario {
         this.userEmail = userEmail;
     }
 
-    @Override
-    public String toString() {
-        return "Usuario [User Name=" + userName + ", Password=" + password + ", User Email=" + userEmail + "]";
-    }
-
     public Persona getPersona() {
         return persona;
     }
 
     public void setPersona(Persona persona) {
         this.persona = persona;
+    }
+
+    @Override
+    public String toString() {
+        return "Usuario [password=" + password + ", persona=" + persona + ", userEmail=" + userEmail + ", userName="
+                + userName + ", usuarioId=" + usuarioId + "]";
     }
 
     /*public int getPersonaId() {
