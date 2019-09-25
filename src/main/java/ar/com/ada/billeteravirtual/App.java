@@ -3,26 +3,24 @@ package ar.com.ada.billeteravirtual;
 import java.util.List;
 import java.util.Scanner;
 
-import ar.com.ada.billeteravirtual.*;
-import ar.com.ada.billeteravirtual.excepciones.*;
-import ar.com.ada.billeteravirtual.security.*;
-
 import org.hibernate.exception.ConstraintViolationException;
 
+import ar.com.ada.billeteravirtual.excepciones.PersonaEdadException;
+import ar.com.ada.billeteravirtual.security.Crypto;
 
 public class App {
 
     public static Scanner Teclado = new Scanner(System.in);
 
     public static PersonaManager ABMPersona = new PersonaManager();
-    public static UsuarioManager ABMUsuario = new UsuarioManager();
+    // public static UsuarioManager ABMUsuario = new UsuarioManager();
 
     public static void main(String[] args) throws Exception {
 
         try {
 
             ABMPersona.setup();
-            ABMUsuario.setup();
+            // ABMUsuario.setup();
 
             printOpciones();
 
@@ -33,10 +31,10 @@ public class App {
 
                 switch (opcion) {
                 case 1:
-            
+
                     try {
-                        alta();            
-                    } catch (PersonaEdadException exedad){
+                        alta();
+                    } catch (PersonaEdadException exedad) {
                         System.out.println("La edad permitida es a partir de 18 anios");
                     }
                     break;
@@ -70,7 +68,7 @@ public class App {
 
             // Hago un safe exit del manager
             ABMPersona.exit();
-            ABMUsuario.exit();
+            // ABMUsuario.exit();
 
         } catch (Exception e) {
             // TODO: handle exception
@@ -91,70 +89,67 @@ public class App {
         p.setDni(Teclado.nextLine());
         System.out.println("Ingrese la edad:");
         p.setEdad(Teclado.nextInt());
-        
+
         Teclado.nextLine();
         System.out.println("Ingrese el Email:");
         p.setEmail(Teclado.nextLine());
 
-        //ABMPersona.create(p);
+        ABMPersona.create(p);
 
-        //System.out.println("Persona generada con exito.  " + p);
+        System.out.println("Persona generada con exito. " + p);
 
-        System.out.println("Desea crear un usuario para esa persona?");
+        // System.out.println("Desea crear un usuario para esa persona? S / N");
 
-        String rta;
-        rta = Teclado.nextLine();
-        if (rta.equals("si")) {
+        // String rta;
+        // rta = Teclado.nextLine();
 
+        // if (rta.equals("S") || rta.equals("s")) {
             Usuario u = new Usuario();
             u.setUserName(p.getEmail());
             System.out.println("Su nombre de usuario es " + u.getUserName());
             System.out.println("Ingrese su password:");
-            
-            //La password ingresa en texto claro a la variable y luego se encripta
+
+            // La password ingresa en texto claro a la variable y luego se encripta
             String passwordEnTextoClaro;
             String passwordEncriptada;
             String passwordEnTextoClaroDesencriptado;
 
             passwordEnTextoClaro = Teclado.nextLine();
-
             passwordEncriptada = Crypto.encrypt(passwordEnTextoClaro, u.getUserName());
-
             passwordEnTextoClaroDesencriptado = Crypto.decrypt(passwordEncriptada, u.getUserName());
 
-            System.out.println("Tu password encriptada es :" +  passwordEncriptada);
+            System.out.println("Tu password encriptada es :" + passwordEncriptada);
+            System.out.println("Tu password desencriptada es :" + passwordEnTextoClaroDesencriptado);
 
-            System.out.println("Tu password desencriptada es :" +  passwordEnTextoClaroDesencriptado);
-
-            if (passwordEnTextoClaro.equals(passwordEnTextoClaroDesencriptado))
-            {
+            if (passwordEnTextoClaro.equals(passwordEnTextoClaroDesencriptado)) {
                 System.out.println("Ambas passwords coinciden");
-            }
-            else {
+            } else {
                 System.out.println("Las passwords no coinciden, nunca debio entrar aqui");
             }
 
             u.setPassword(passwordEncriptada);
 
-            /*
-             * System.out.println("Su mail es:"); u.setUserEmail(p.getEmail());
-             */
-            //System.out.println("Ingrese su email de usuario:");
-            u.setUserEmail(u.getUserName());
+            System.out.println("Su mail es:");
+            u.setUserEmail(p.getEmail());
 
-            p.setUsuario(u);
-            //u.setPersona(p); <- esta linea hariaa falta si no lo hacemos en el p.SetUsuario(u)
-            //u.setPersonaId(p.getPesonaId());
-            //ABMUsuario.create(u);
+            // System.out.println("Ingrese su email de usuario:");
+            // u.setUserEmail(u.getUserName());
 
-            //System.out.println("Usuario generado con exito.  " + u);
-        }
+            p.setUsuario(u); // u.setPersona(p); <- esta linea hariaa falta si no lo
+            // hacemos en el p.SetUsuario(u) //u.setPersonaId(p.getPesonaId());
+            // ABMUsuario.create(u);
 
-        ABMPersona.create(p);
+            System.out.println("Usuario generado con exito.  " + u);
+        // }
 
-        System.out.println("Persona generada con exito.  " + p);
+        // ABMPersona.create(p);
+
+        // System.out.println("Persona generada con exito.  " + p);
+
         if (p.getUsuario() != null)
-            System.out.println("Tambien se le creo un usuario: " + p.getUsuario().getUserName());
+            System.out.println("Tambien se creo un usuario: " + p.getUsuario().getUserName());
+
+            
     }
 
     public static void baja() {
@@ -169,7 +164,8 @@ public class App {
             System.out.println("Persona no encontrada.");
 
         } else {
-            // en esta version, como hicimos join column y cascade.ALL, delete se aplica a todo lo vinculado
+            // en esta version, como hicimos join column y cascade.ALL, delete se aplica a
+            // todo lo vinculado
             // así que este try/catch no hace nada
             try {
 
@@ -207,98 +203,97 @@ public class App {
         // System.out.println("Ingrese el nombre de la persona a modificar:");
         // String n = Teclado.nextLine();
 
-        System.out.println("Desea modificar un dato de la persona o del usuario? \n1: persona \n2: usuario");
-        int seleccion = Teclado.nextInt();
+        // System.out.println("Desea modificar un dato de la persona o del usuario? \n1:
+        // persona \n2: usuario");
+        // int seleccion = Teclado.nextInt();
 
-        if (seleccion == 1) {
+        // if (seleccion == 1) {
 
-            System.out.println("Ingrese el ID de la persona a modificar:");
-            int id = Teclado.nextInt();
-            Teclado.nextLine();
-            Persona personaEncontrada = ABMPersona.read(id);
+        System.out.println("Ingrese el ID de la persona a modificar:");
+        int id = Teclado.nextInt();
+        Teclado.nextLine();
+        Persona personaEncontrada = ABMPersona.read(id);
 
-            if (personaEncontrada != null) {
+        if (personaEncontrada != null) {
 
-                System.out.println(personaEncontrada.toString() + "seleccionado para modificacion.");
+            System.out.println(personaEncontrada.toString() + "seleccionado para modificacion.");
 
-                System.out.println(
-                        "Elija qué dato de la persona desea modificar: \n1: nombre, \n2: DNI, \n3: edad, \n4: email");
-                int selecper = Teclado.nextInt();
+            System.out.println(
+                    "Elija qué dato de la persona desea modificar: \n1: nombre, \n2: DNI, \n3: edad, \n4: email");
+            int selecper = Teclado.nextInt();
 
-                switch (selecper) {
-                case 1:
-                    System.out.println("Ingrese el nuevo nombre:");
-                    Teclado.nextLine();
-                    personaEncontrada.setNombre(Teclado.nextLine());
+            switch (selecper) {
+            case 1:
+                System.out.println("Ingrese el nuevo nombre:");
+                Teclado.nextLine();
+                personaEncontrada.setNombre(Teclado.nextLine());
 
-                    break;
-                case 2:
-                    System.out.println("Ingrese el nuevo DNI:");
-                    Teclado.nextLine();
-                    personaEncontrada.setDni(Teclado.nextLine());
+                break;
+            case 2:
+                System.out.println("Ingrese el nuevo DNI:");
+                Teclado.nextLine();
+                personaEncontrada.setDni(Teclado.nextLine());
 
-                    break;
-                case 3:
-                    System.out.println("Ingrese la nueva edad:");
-                    Teclado.nextLine();
-                    personaEncontrada.setEdad(Teclado.nextInt());
+                break;
+            case 3:
+                System.out.println("Ingrese la nueva edad:");
+                Teclado.nextLine();
+                personaEncontrada.setEdad(Teclado.nextInt());
 
-                    break;
-                case 4:
-                    System.out.println("Ingrese el nuevo Email:");
-                    Teclado.nextLine();
-                    personaEncontrada.setEmail(Teclado.nextLine());
+                break;
+            case 4:
+                System.out.println("Ingrese el nuevo Email:");
+                Teclado.nextLine();
+                personaEncontrada.setEmail(Teclado.nextLine());
 
-                    break;
+                break;
 
-                default:
-                    break;
-                }
-
-                // Teclado.nextLine();
-
-                ABMPersona.update(personaEncontrada);
-
-                System.out.println("El registro de " + personaEncontrada.getNombre() + " ha sido modificado.");
-
-            } else {
-                System.out.println("Persona no encontrada.");
+            default:
+                break;
             }
+
+            // Teclado.nextLine();
+
+            ABMPersona.update(personaEncontrada);
+
+            System.out.println("El registro de " + personaEncontrada.getNombre() + " ha sido modificado.");
 
         } else {
-
-            System.out.println("Ingrese el ID del usuario que desea modificar:");
-            int idu = Teclado.nextInt();
-            Usuario usuarioEncontrado = ABMUsuario.read(idu);
-
-            if (usuarioEncontrado != null) {
-
-                System.out.println(usuarioEncontrado.toString() + "seleccionado para modificacion.");
-
-                System.out.println("Elija qué dato del usuario desea modificar: 1: email, 2: password");
-                int selecus = Teclado.nextInt();
-
-                if (selecus == 1) {
-                    System.out.println("Ingrese el nuevo Email de usuario:");
-                    Teclado.nextLine();
-                    usuarioEncontrado.setUserEmail(Teclado.nextLine());
-                } else {
-                    System.out.println("Ingrese la nueva password de usuario:");
-                    Teclado.nextLine();
-                    usuarioEncontrado.setPassword(Teclado.nextLine());
-                }
-
-                ABMUsuario.update(usuarioEncontrado);
-
-                System.out.println("El registro de " + usuarioEncontrado.getUserName() + " ha sido modificado.");
-            } else {
-                System.out.println("Usuario no encontrado.");
-            }
-
+            System.out.println("Persona no encontrada.");
         }
+
+        /*
+         * } else {
+         * 
+         * System.out.println("Ingrese el ID del usuario que desea modificar:"); int idu
+         * = Teclado.nextInt(); Usuario usuarioEncontrado = ABMUsuario.read(idu);
+         * 
+         * if (usuarioEncontrado != null) {
+         * 
+         * System.out.println(usuarioEncontrado.toString() +
+         * "seleccionado para modificacion.");
+         * 
+         * System.out.
+         * println("Elija qué dato del usuario desea modificar: 1: email, 2: password");
+         * int selecus = Teclado.nextInt();
+         * 
+         * if (selecus == 1) { System.out.println("Ingrese el nuevo Email de usuario:");
+         * Teclado.nextLine(); usuarioEncontrado.setUserEmail(Teclado.nextLine()); }
+         * else { System.out.println("Ingrese la nueva password de usuario:");
+         * Teclado.nextLine(); usuarioEncontrado.setPassword(Teclado.nextLine()); }
+         * 
+         * ABMUsuario.update(usuarioEncontrado);
+         * 
+         * System.out.println("El registro de " + usuarioEncontrado.getUserName() +
+         * " ha sido modificado."); } else {
+         * System.out.println("Usuario no encontrado."); }
+         * 
+         * }
+         */
     }
 
-    /* public static void modificaByDNI() { //
+    /*
+     * public static void modificaByDNI() { //
      * System.out.println("Ingrese el nombre de la persona a modificar:"); // String
      * n = Teclado.nextLine();
      * System.out.println("Ingrese el DNI de la persona a modificar:"); String dni =
@@ -330,8 +325,8 @@ public class App {
         for (Persona p : todas) {
             System.out.println("Id: " + p.getPesonaId() + " Nombre: " + p.getNombre());
 
-            if (p.getUsuario() != null )
-                System.out.println(" Usuario: "+ p.getUsuario().getUserName());
+            if (p.getUsuario() != null)
+                System.out.println(" Usuario: " + p.getUsuario().getUserName());
             else
                 System.out.println("");
         }
