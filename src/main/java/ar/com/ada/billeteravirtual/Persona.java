@@ -117,10 +117,5 @@ public class Persona {
         this.billetera.setPersona(this);
     }
 
-    @Override
-    public String toString() {
-        return "Persona [billetera=" + billetera + ", dni=" + dni + ", edad=" + edad + ", email=" + email + ", nombre="
-                + nombre + ", pesonaId=" + pesonaId + ", usuario=" + usuario + "]";
-    }
-
+    
 }

@@ -76,12 +76,7 @@ public class Usuario {
     public void setPersona(Persona persona) {
         this.persona = persona;
     }
-
-    @Override
-    public String toString() {
-        return "Usuario [password=" + password + ", persona=" + persona + ", userEmail=" + userEmail + ", userName="
-                + userName + ", usuarioId=" + usuarioId + "]";
-    }
+   
 
     /*public int getPersonaId() {
         return personaId;

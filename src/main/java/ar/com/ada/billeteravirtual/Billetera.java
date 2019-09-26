@@ -18,7 +18,7 @@ public class Billetera {
     @OneToOne
     @JoinColumn(name= "persona_id", referencedColumnName = "persona_id")
     private Persona persona;
-    @OneToMany (mappedBy = "billetera")
+    @OneToMany (mappedBy = "billetera", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Cuenta> cuentas = new ArrayList<Cuenta>();
     
 
@@ -26,7 +26,10 @@ public class Billetera {
         this.billeteraId = billeteraId;
     }
 
-    public int getBilleteraId() {
+    public Billetera() {
+	}
+
+	public int getBilleteraId() {
         return billeteraId;
     }
 
@@ -48,11 +51,6 @@ public class Billetera {
 
     public void setCuentas(List<Cuenta> cuentas) {
         this.cuentas = cuentas;
-    }
-
-    @Override
-    public String toString() {
-        return "Billetera [billeteraId=" + billeteraId + ", cuentas=" + cuentas + ", persona=" + persona + "]";
     }
 
 }

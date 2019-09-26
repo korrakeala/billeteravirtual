@@ -16,12 +16,13 @@ public class Cuenta {
     private int cuentaId;
     private String moneda; // monedaId?
     private double saldo; // (balance)
-    private double saldoPendiente;
-    private String nroCuenta; // (univoco)
+    @Column(name = "saldo_disponible")
+    private double saldoDisponible;
+    // private String nroCuenta; // (univoco)
     @ManyToOne
     @JoinColumn(name = "billetera_id", referencedColumnName = "billetera_id")
     private Billetera billetera;
-    @OneToMany (mappedBy = "cuenta")
+    @OneToMany (mappedBy = "cuenta", cascade = CascadeType.ALL)
     private List<Movimiento> movimientos = new ArrayList<Movimiento>(); // (puede necesitar tabla intermedia)
 
     void dineroPendiente() {
@@ -40,10 +41,9 @@ public class Cuenta {
 
     }
 
-    public Cuenta(int cuentaId, String moneda, String nroCuenta) {
+    public Cuenta(int cuentaId, String moneda) {
         this.cuentaId = cuentaId;
         this.moneda = moneda;
-        this.nroCuenta = nroCuenta;
     }
 
     public Cuenta() {
@@ -73,22 +73,6 @@ public class Cuenta {
         this.saldo = saldo;
     }
 
-    public double getSaldoPendiente() {
-        return saldoPendiente;
-    }
-
-    public void setSaldoPendiente(double saldoPendiente) {
-        this.saldoPendiente = saldoPendiente;
-    }
-
-    public String getNroCuenta() {
-        return nroCuenta;
-    }
-
-    public void setNroCuenta(String nroCuenta) {
-        this.nroCuenta = nroCuenta;
-    }
-
     public Billetera getBilletera() {
         return billetera;
     }
@@ -106,10 +90,12 @@ public class Cuenta {
         this.movimientos = movimientos;
     }
 
-    @Override
-    public String toString() {
-        return "Cuenta [billetera=" + billetera + ", cuentaId=" + cuentaId + ", moneda=" + moneda + ", movimientos="
-                + movimientos + ", nroCuenta=" + nroCuenta + ", saldo=" + saldo + ", saldoPendiente=" + saldoPendiente
-                + "]";
+    public double getSaldoDisponible() {
+        return saldoDisponible;
     }
+
+    public void setSaldoDisponible(double saldoDisponible) {
+        this.saldoDisponible = saldoDisponible;
+    }
+
 }
