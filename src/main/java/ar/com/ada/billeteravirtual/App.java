@@ -28,7 +28,8 @@ public class App {
             ABMBilletera.setup();
             ABMCuenta.setup();
             ABMMovimiento.setup();
-            
+
+            // transferencia(12, 14, 50);
 
             printOpciones();
 
@@ -62,6 +63,12 @@ public class App {
                 case 5:
                     listarPorNombre();
                     break;
+                case 6:
+                    consultaSaldo();
+                    break;
+                case 7:
+                    transferir();
+                    break;
 
                 default:
                     System.out.println("La opcion no es correcta.");
@@ -72,6 +79,7 @@ public class App {
 
                 opcion = Teclado.nextInt();
                 Teclado.nextLine();
+
             }
 
             // Hago un safe exit del manager
@@ -130,7 +138,7 @@ public class App {
         }
 
         u.setPassword(passwordEncriptada);
-        //System.out.println("Su mail es:");
+        // System.out.println("Su mail es:");
         u.setUserEmail(p.getEmail());
 
         p.setUsuario(u);
@@ -139,22 +147,46 @@ public class App {
 
         ABMPersona.create(p);
 
-        Billetera b = crearBilletera(p);
-        Cuenta c = crearCuenta(b);
-        
+        Billetera b = new Billetera(p);
+        Cuenta c = new Cuenta(b);
+
         c.setBilletera(b);
         ABMBilletera.create(b);
 
         System.out.println("Billetera generada con exito. ID: " + b.getBilleteraId());
         System.out.println("Cuenta generada con exito. ID: " + c.getCuentaId());
 
-        crearMovimiento(c, u);
-        
-        ABMBilletera.update(b);
+        Movimiento m = new Movimiento(c, u);
 
-        Billetera b2 = ABMBilletera.read(b.getBilleteraId());
-        consultarSaldo(b2);
-               
+        ABMBilletera.update(b);
+    }
+
+    public static void consultaSaldo() {
+        System.out.println("Consultar saldo: ingrese ID Billetera.");
+        int id = Teclado.nextInt();
+        Billetera b = ABMBilletera.read(id);
+
+        System.out.println("Elija la cuenta \n1: U$S \n2: AR$");
+        String moneda;
+        int opcionMoneda = Teclado.nextInt();
+        switch (opcionMoneda) {
+        case 1:
+            moneda = "U$S";
+            break;
+        case 2:
+            moneda = "AR$";
+            break;
+        default:
+            moneda = null;
+            break;
+        }
+        if (moneda.equals(null)) {
+            System.out.println("La billetera no posee una cuenta con esa moneda.");
+        } else {
+            System.out.println("El saldo en su cuenta es " + b.consultarSaldo(b, moneda) + ".");
+            System.out.println("El saldo disponible en su cuenta es " + b.consultarSaldoDisponible(b, moneda) + ".");
+        }
+
     }
 
     public static void baja() {
@@ -295,33 +327,6 @@ public class App {
         }
     }
 
-    /*
-     * public static void modificaByDNI() { //
-     * System.out.println("Ingrese el nombre de la persona a modificar:"); // String
-     * n = Teclado.nextLine();
-     * System.out.println("Ingrese el DNI de la persona a modificar:"); String dni =
-     * Teclado.nextLine(); Persona personaEncontrada = ABMPersona.readByDNI(dni);
-     * 
-     * if (personaEncontrada != null) {
-     * 
-     * System.out.println(personaEncontrada.toString() +
-     * "seleccionado para modificacion.");
-     * System.out.println("Ingrese el nuevo nombre:");
-     * personaEncontrada.setNombre(Teclado.nextLine());
-     * System.out.println("Ingrese el nuevo DNI:");
-     * personaEncontrada.setDni(Teclado.nextLine()); // Teclado.nextLine();
-     * System.out.println("Ingrese la nueva edad:");
-     * personaEncontrada.setEdad(Teclado.nextInt()); Teclado.nextLine();
-     * 
-     * System.out.println("Ingrese el nuevo Email:");
-     * personaEncontrada.setEmail(Teclado.nextLine());
-     * 
-     * ABMPersona.update(personaEncontrada); System.out.println("El registro de " +
-     * personaEncontrada.getDni() + " ha sido modificado.");
-     * 
-     * } else { System.out.println("Persona no encontrada."); }
-     */
-
     public static void listar() {
 
         List<Persona> todas = ABMPersona.buscarTodas();
@@ -346,6 +351,27 @@ public class App {
         }
     }
 
+    //falta poner límite para no tener saldos negativos
+    public static void transferir() {
+        System.out.println("Transferir: ingrese ID Billetera de origen.");
+        int idO = Teclado.nextInt();
+        Billetera bO = ABMBilletera.read(idO);
+        System.out.println("Transferir: ingrese ID Billetera de destino.");
+        int idD = Teclado.nextInt();
+        Billetera bD = ABMBilletera.read(idD);
+        System.out.println("Transferir: ingrese el importe.");
+        double importe = Teclado.nextDouble();
+
+        bO.transferencia(bD, importe);
+
+        ABMBilletera.update(bO);
+        ABMBilletera.update(bD);
+
+        System.out.println(
+                "Transferencia exitosa. Su nuevo saldo es " + bO.consultarSaldo(bO, bO.getCuenta(0).getMoneda()) + ".");
+
+    }
+
     public static void printOpciones() {
         System.out.println("=======================================");
         System.out.println("");
@@ -354,63 +380,11 @@ public class App {
         System.out.println("Para modificar una persona presione 3.");
         System.out.println("Para ver el listado presione 4.");
         System.out.println("Buscar una persona por nombre especifico(SQL Injection)) 5.");
+        System.out.println("Consultar Saldo presione 6.");
+        System.out.println("Hacer una transferencia presione 7.");
         System.out.println("Para terminar presione 0.");
         System.out.println("");
         System.out.println("=======================================");
     }
 
-    public static Billetera crearBilletera(Persona p) {
-        Billetera b = new Billetera();
-        b.setPersona(p);
-        p.setBilletera(b);
-        
-        return b;
-    }
-
-    public static Cuenta crearCuenta(Billetera b) {
-        Cuenta c = new Cuenta();
-        System.out.println("Creacion de cuenta. Seleccione la moneda: \n1: U$S \n2: AR$");
-        int opcionMoneda = Teclado.nextInt();
-        switch (opcionMoneda) {
-        case 1:
-            c.setMoneda("U$S");
-            break;
-        case 2:
-            c.setMoneda("AR$");
-            break;
-        default:
-            break;
-        }
-        return c;
-    }
-
-    public static Movimiento crearMovimiento(Cuenta c, Usuario u) {
-        Movimiento m = new Movimiento();
-        System.out.println("Gracias por crear tu billetera! te regalamos " + c.getMoneda() + " 100 para que empieces a usarla.");
-        Date f = new Date();
-        m.setConcepto("Carga inicial");
-        m.setImporte(100);
-        m.setTipo("Entrada");
-        m.setFechaMov(f);
-        m.setCuentaOrigenId(c.getCuentaId());
-        m.setCuentaDestinoId(c.getCuentaId());
-        m.setaUsuarioId(u.getUsuarioId());
-        m.setDeUsuarioId(u.getUsuarioId());
-        if (m.getTipo().equals("Entrada")) {
-            c.setSaldo(c.getSaldo() + m.getImporte());
-            c.setSaldoDisponible(c.getSaldo());
-        } else {
-            c.setSaldo(c.getSaldo() - m.getImporte());
-            c.setSaldoDisponible(c.getSaldo());
-        }
-        m.setCuenta(c);
-        return m;
-    }
-
-    public static void consultarSaldo(Billetera b) {
-        Cuenta c = b.getCuentas().get(0);
-        System.out.println("El saldo en su cuenta ID: " + c.getCuentaId() + " es " + c.getMoneda() + " " + c.getSaldo());
-        System.out.println("El saldo disponible en su cuenta es " + c.getMoneda() + c.getSaldoDisponible());
-        
-    }
 }

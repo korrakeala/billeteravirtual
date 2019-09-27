@@ -135,12 +135,30 @@ public class Movimiento {
         this.cuenta.getMovimientos().add(this);
     }
 
-    @Override
-    public String toString() {
-        return "Movimiento [aUsuarioId=" + aUsuarioId + ", concepto=" + concepto + ", cuenta=" + cuenta
-                + ", cuentaDestinoId=" + cuentaDestinoId + ", cuentaOrigenId=" + cuentaOrigenId + ", deUsuarioId="
-                + deUsuarioId + ", detalle=" + detalle + ", estado=" + estado + ", fechaMov=" + fechaMov + ", importe="
-                + importe + ", movimientoId=" + movimientoId + ", tipo=" + tipo + "]";
+    /**
+     * Este constructor crea un movimiento inicial. Hay que sacar el print y
+     * adaptarlo para generar distintos movimientos, no solo inicial.
+     * @param c
+     * @param u
+     */
+    public Movimiento(Cuenta c, Usuario u) {
+        System.out.println("Gracias por crear tu billetera! te regalamos " + c.getMoneda() + " 100 para que empieces a usarla.");
+        Date f = new Date();
+        this.setConcepto("Carga inicial");
+        this.setImporte(100);
+        this.setTipo("Entrada");
+        this.setFechaMov(f);
+        this.setCuentaOrigenId(c.getCuentaId());
+        this.setCuentaDestinoId(c.getCuentaId());
+        this.setaUsuarioId(u.getUsuarioId());
+        this.setDeUsuarioId(u.getUsuarioId());
+        if (this.getTipo().equals("Entrada")) {
+            c.setSaldo(c.getSaldo() + this.getImporte());
+            c.setSaldoDisponible(c.getSaldo());
+        } else {
+            c.setSaldo(c.getSaldo() - this.getImporte());
+            c.setSaldoDisponible(c.getSaldo());
+        }
+        this.setCuenta(c);
     }
-
 }
